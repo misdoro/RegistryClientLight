@@ -3,36 +3,25 @@ package org.vamdc.registry.client;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.vamdc.registry.client.impl.RegistryImpl;
+
 public final class RegistryFactory {
 
-	/**
-	 * Get a registry client with the default registry URL
-	 * @return an implementation of the Registry interface
-	 */
+	public final static String DEFAULT_REGISTRY_ENDPOINT="http://casx019-zone1.ast.cam.ac.uk/registry/services/RegistryQueryv1_0";
+	
+
 	public static Registry getClient(){
-		return null;
+		return new RegistryImpl(DEFAULT_REGISTRY_ENDPOINT);
 	}
 	
-	/**
-	 * Get a registry client with custom registry URL
-	 * @param serviceURL
-	 * @return
-	 */
-	public static Registry getClient(URL serviceURL){
-		return null;
+
+	public static Registry getClient(URL registryURL){
+		return new RegistryImpl(registryURL.toString());
 	}
 	
-	/**
-	 * Get a registry client with custom registry URL
-	 * @param serviceURL
-	 * @return
-	 */
-	public static Registry getClient(String serviceURL){
-		try {
-			return getClient(new URL(serviceURL));
-		} catch (MalformedURLException e) {
-			return null;
-		}
+
+	public static Registry getClient(String registryURL){
+		return new RegistryImpl(registryURL);
 	}
 	
 	

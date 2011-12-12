@@ -1,10 +1,17 @@
 package org.vamdc.registry.client;
 
+import net.ivoa.wsdl.registrysearch.ErrorResp;
+
 public class RegistryCommunicationException extends Exception{
-	private static final long serialVersionUID = 472086748698824500L;
-	
-	public RegistryCommunicationException(){
-		super();
+	public RegistryCommunicationException(String string) {
+		super(string);
 	}
 
+	public RegistryCommunicationException(String string, Throwable e) {
+		super(string, e);
+	}
+
+	private static final long serialVersionUID = 472086748698824500L;
+	
+	
 }

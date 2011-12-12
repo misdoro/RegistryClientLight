@@ -46,7 +46,7 @@ public interface Registry {
 	
 	public URL getAvailabilityURL(String ivoaid) throws RegistryCommunicationException;
 	
-	public Resource getResourceMetadata(String ivoaid);
+	public Resource getResourceMetadata(String ivoaid) throws RegistryCommunicationException;;
 	
 	
 	/**
