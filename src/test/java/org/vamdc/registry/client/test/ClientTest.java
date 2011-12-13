@@ -1,7 +1,11 @@
 package org.vamdc.registry.client.test;
 
 import java.net.URL;
+import java.util.Set;
 
+import net.ivoa.xml.voresource.v1.Resource;
+
+import org.vamdc.dictionary.Restrictable;
 import org.vamdc.registry.client.Registry;
 import org.vamdc.registry.client.Registry.Service;
 import org.vamdc.registry.client.RegistryCommunicationException;
@@ -33,16 +37,57 @@ public class ClientTest extends TestCase {
 	
 	public void testGetAvailability(){
 		try{
-			System.out.println("Retrieving availability URLs");
+			checkAvailabiltyURLs();
+		}catch (RegistryCommunicationException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+	
+	public void testGetResource(){
+		try{
+			System.out.println("Retrieving database names");
 			for (String service:client.getIVOAIDs(Service.VAMDC_TAP)){
-				URL caps = client.getAvailabilityURL(service);
-				assertNotNull(caps);
-				assertTrue(caps.toString().contains("availability"));
-				System.out.println(caps.toString());
+				Resource res = client.getResourceMetadata(service);
+				assertNotNull(res);
+				System.out.println();
+				System.out.println(service);
+				System.out.println(res.getTitle());
+				System.out.println(res.getCuration().getPublisher().getValue());
+				
 			}
 		}catch (RegistryCommunicationException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
+		}
+	}
+	
+	public void testGetRestrictables(){
+		try{
+			System.out.println("Retrieving supported restrictables");
+			for (String service:client.getIVOAIDs(Service.VAMDC_TAP)){
+				Set<Restrictable> restricts =client.getRestrictables(service);
+				assertNotNull(restricts);
+				assertTrue(restricts.size()>0);
+				System.out.println();
+				System.out.println(service);
+				for (Restrictable keyword:restricts){
+					System.out.println(keyword.name()+"("+keyword.info()+")");
+				}
+			}
+		}catch (RegistryCommunicationException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	private void checkAvailabiltyURLs() throws RegistryCommunicationException {
+		System.out.println("Retrieving availability URLs");
+		for (String service:client.getIVOAIDs(Service.VAMDC_TAP)){
+			URL caps = client.getAvailabilityURL(service);
+			assertNotNull(caps);
+			assertTrue(caps.toString().contains("availability"));
+			System.out.println(caps.toString());
 		}
 	}
 

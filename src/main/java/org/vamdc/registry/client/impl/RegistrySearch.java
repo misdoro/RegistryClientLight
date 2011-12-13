@@ -2,6 +2,7 @@ package org.vamdc.registry.client.impl;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +11,9 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
+import org.vamdc.dictionary.Restrictable;
 import org.vamdc.registry.client.RegistryCommunicationException;
+import org.vamdc.xml.vamdc_tap.v1.VamdcTap;
 
 import net.ivoa.wsdl.registrysearch.ErrorResp;
 import net.ivoa.wsdl.registrysearch.OpUnsupportedResp;
@@ -18,6 +21,7 @@ import net.ivoa.wsdl.registrysearch.RegistrySearchPortType;
 import net.ivoa.wsdl.registrysearch.v1.XQuerySearch;
 import net.ivoa.wsdl.registrysearch.v1.XQuerySearchResponse;
 import net.ivoa.xml.voresource.v1.Capability;
+import net.ivoa.xml.voresource.v1.Resource;
 import net.ivoa.xml.voresource.v1.Service;
 
 public class RegistrySearch {
@@ -41,6 +45,10 @@ public class RegistrySearch {
 	Map<String,URL> capabilityURLs = new HashMap<String,URL>();
 	Map<String,URL> availabilityURLs = new HashMap<String,URL>();
 	Map<String,URL> vamdcTapURLs = new HashMap<String,URL>();
+	
+	Map<String,Set<Restrictable>> vamdcTapRestrictables = new HashMap<String,Set<Restrictable>>();
+	
+	Map<String,Resource> resultResources = new HashMap<String,Resource>();
 
 	public Set<String> getIvoaIDs() {
 		return ivoaIDs;
@@ -69,6 +77,9 @@ public class RegistrySearch {
 			
 			extractServiceEndpoints(srv);
 			
+			resultResources.put(srv.getIdentifier(), srv);
+			
+			
 		}
 	}
 
@@ -78,6 +89,7 @@ public class RegistrySearch {
 		URL capabilitiesURL=null;
 		URL availabilityURL=null;
 		URL vamdcTapURL=null;
+		Set<Restrictable> keywords = null;
 		try {
 			for (Capability cap:srv.getCapability()){
 
@@ -87,18 +99,40 @@ public class RegistrySearch {
 					availabilityURL= new URL(cap.getInterface().get(0).getAccessURL().get(0).getValue());
 				else if (STD_VAMDC_TAP.equals(cap.getStandardID())){
 					vamdcTapURL=new URL(cap.getInterface().get(0).getAccessURL().get(0).getValue());
+					VamdcTap capability = (VamdcTap)cap;
+					keywords = extractRestrictables( capability);
+					
 				}
 			}
 		} catch (MalformedURLException e) {
 			
 		}finally{
-			if (capabilitiesURL!=null && availabilityURL!=null && vamdcTapURL!=null){
+			if (capabilitiesURL!=null && availabilityURL!=null && vamdcTapURL!=null && keywords!=null){
 				capabilityURLs.put(ivoaid, capabilitiesURL);
 				availabilityURLs.put(ivoaid, availabilityURL);
 				vamdcTapURLs.put(ivoaid, vamdcTapURL);
+				vamdcTapRestrictables.put(ivoaid, keywords);
 				ivoaIDs.add(ivoaid);
+				
 			}
 		}
+	}
+
+
+	private Set<Restrictable> extractRestrictables(VamdcTap capability) {
+		Set<Restrictable> restrictables = new HashSet<Restrictable>();
+		for (String keyword:capability.getRestrictable()){
+			
+			try{
+				Restrictable rest = Restrictable.valueOfIgnoreCase(keyword);
+				restrictables.add(rest);
+			}catch(IllegalArgumentException e){
+				System.out.println("Unknown keyword"+keyword);
+			}
+		}
+		if (restrictables.size()>0)
+			return EnumSet.copyOf(restrictables);
+		return EnumSet.noneOf(Restrictable.class);
 	}
 
 }

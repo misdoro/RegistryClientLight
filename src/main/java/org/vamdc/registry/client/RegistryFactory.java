@@ -2,7 +2,7 @@ package org.vamdc.registry.client;
 
 import java.net.URL;
 
-import org.vamdc.registry.client.impl.RegistryImpl;
+import org.vamdc.registry.client.impl.RegistryCachedImpl;
 
 public final class RegistryFactory {
 
@@ -10,17 +10,17 @@ public final class RegistryFactory {
 	
 
 	public static Registry getClient() throws RegistryCommunicationException{
-		return new RegistryImpl(DEFAULT_REGISTRY_ENDPOINT);
+		return new RegistryCachedImpl(DEFAULT_REGISTRY_ENDPOINT);
 	}
 	
 
 	public static Registry getClient(URL registryURL) throws RegistryCommunicationException{
-		return new RegistryImpl(registryURL.toString());
+		return new RegistryCachedImpl(registryURL.toString());
 	}
 	
 
 	public static Registry getClient(String registryURL) throws RegistryCommunicationException{
-		return new RegistryImpl(registryURL);
+		return new RegistryCachedImpl(registryURL);
 	}
 	
 	

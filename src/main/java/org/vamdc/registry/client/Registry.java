@@ -48,20 +48,8 @@ public interface Registry {
 	
 	public Resource getResourceMetadata(String ivoaid) throws RegistryCommunicationException;;
 	
-	
-	/**
-	 * Get a set of Restrictable keywords for a database
-	 * @param ivoaid IVOA identifier of the desired tap service
-	 * @return a set of org.vamdc.dictionary.Restrictable keywords supported by the node.
-	 * @throws RegistryCommunicationException
-	 */
 	public Set<Restrictable> getRestrictables(String ivoaid) throws RegistryCommunicationException;
 	
-	/**
-	 * Get a tap URL for the specified IVOA identifier
-	 * @param ivoaid ivoa identifier of the desired tap service
-	 * @return tapservice access URL or null if something went wrong.
-	 */
-	public URL getTapBaseURL(String ivoaid) throws RegistryCommunicationException;
+	public URL getVamdcTapURL(String ivoaid) throws RegistryCommunicationException;
 	
 }
