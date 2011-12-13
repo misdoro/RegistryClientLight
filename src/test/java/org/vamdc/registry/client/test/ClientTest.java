@@ -68,7 +68,13 @@ public class ClientTest extends TestCase {
 	}
 
 	private Registry getClient() {
-		Registry client = RegistryFactory.getClient();
+		Registry client = null;
+		try {
+			client = RegistryFactory.getClient();
+		} catch (RegistryCommunicationException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
 		assertNotNull(client);
 		return client;
 	}

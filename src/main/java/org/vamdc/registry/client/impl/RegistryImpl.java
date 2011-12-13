@@ -1,12 +1,10 @@
 package org.vamdc.registry.client.impl;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
 import net.ivoa.wsdl.registrysearch.RegistrySearchPortType;
-import net.ivoa.wsdl.registrysearch.v1.XQuerySearchResponse;
 import net.ivoa.xml.voresource.v1.Resource;
 
 import org.vamdc.dictionary.Restrictable;
@@ -19,14 +17,10 @@ public class RegistryImpl implements Registry{
 	private RegistrySearch search;
 	private RegistryCommunicationException storedException = null;
 	
-	public RegistryImpl(String registryEndpoint) {
+	public RegistryImpl(String registryEndpoint) throws RegistryCommunicationException{
 		RegistrySearchPortType searchPort = RegistryClientFactory.getSearchPort(registryEndpoint);
-		try {
-			this.search = new RegistrySearch(searchPort);
-		} catch (RegistryCommunicationException e) {
-			storedException = e;
-		}
-
+		
+		this.search = new RegistrySearch(searchPort);
 		
 	}
 

@@ -1,6 +1,5 @@
 package org.vamdc.registry.client;
 
-import net.ivoa.wsdl.registrysearch.ErrorResp;
 
 public class RegistryCommunicationException extends Exception{
 	public RegistryCommunicationException(String string) {

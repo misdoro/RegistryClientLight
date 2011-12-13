@@ -65,7 +65,6 @@ public class RegistrySearch {
 			throw new RegistryCommunicationException("The registry returned no results");
 		for (Object element:searchResult){
 			JAXBElement<?> obj = (JAXBElement<?>)element;
-			System.out.println(obj.getName());
 			Service srv = (Service) obj.getValue();
 			
 			extractServiceEndpoints(srv);
