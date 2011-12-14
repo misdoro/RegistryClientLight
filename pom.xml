@@ -4,7 +4,7 @@
 
 	<groupId>org.vamdc</groupId>
 	<artifactId>registry-client-light</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>11.12-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>client-light</name>
@@ -46,30 +46,16 @@
 			<artifactId>mappings</artifactId>
 			<version>11.12-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.ws</groupId>
-			<artifactId>jaxws-rt</artifactId>
-			<version>2.1.7</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jvnet.staxex</groupId>
-					<artifactId>stax-ex</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.staxex</groupId>
-			<artifactId>stax-ex</artifactId>
-			<version>1.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>javax.xml.stream</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<repository>
+			<id>vamdcrepo</id>
+			<name>VAMDC releases</name>
+			<url>ftp://doronin.org/</url>
+		</repository>
+	</distributionManagement>
+	
 	<build>
 		<plugins>
 			<!-- Don't forget Java 5!! -->
@@ -81,6 +67,14 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<extensions>
+			<!-- Enabling the use of FTP -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-beta-6</version>
+			</extension>
+		</extensions>
 	</build>
 
 </project>
