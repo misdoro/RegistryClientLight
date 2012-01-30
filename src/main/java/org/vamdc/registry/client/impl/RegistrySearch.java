@@ -29,8 +29,9 @@ public class RegistrySearch {
 	private final static String STD_VOSI_CAPABILITIES="ivo://ivoa.net/std/VOSI#capabilities";
 	private final static String STD_VOSI_AVAILABILITY="ivo://ivoa.net/std/VOSI#availability";
 	private final static String STD_VAMDC_TAP="ivo://vamdc/std/VAMDC-TAP";
+	private final static String STD_XSAMS_CONSUMER="ivo://vamdc/std/XSAMS-consumer";
 
-	private static String searchQuery  = "declare namespace ri='http://www.ivoa.net/xml/RegistryInterface/v1.0'; " +
+	private static String vamdcTapSearchQuery  = "declare namespace ri='http://www.ivoa.net/xml/RegistryInterface/v1.0'; " +
 			"declare namespace vs='http://www.ivoa.net/xml/VODataService/v1.0'; " +
 			"declare namespace xsi='http://www.w3.org/2001/XMLSchema-instance'; " + 
 			"for $x in //ri:Resource " + 
@@ -38,37 +39,57 @@ public class RegistrySearch {
 			"and $x/@status='active' " +
 			"and $x/@xsi:type='vs:CatalogService'" +
 			"return $x";
+	
+	private static String consumerSearchQuery  = "declare namespace ri='http://www.ivoa.net/xml/RegistryInterface/v1.0'; " +
+			"declare namespace vr='http://www.ivoa.net/xml/VOResource/v1.0'; " +
+			"declare namespace xsi='http://www.w3.org/2001/XMLSchema-instance'; " + 
+			"for $x in //ri:Resource " + 
+			"where $x/capability[@standardID='"+STD_XSAMS_CONSUMER+"'] " +
+			"and $x/@status='active' " +
+			"and $x/@xsi:type='vr:Service'" +
+			"return $x";
 
-	private List<Object> searchResult;
-	private Set<String> ivoaIDs = new HashSet<String>();
 
+	private Set<String> tapIvoaIDs = new HashSet<String>();
+	private Set<String> consumerIvoaIDs = new HashSet<String>();
+	
 	Map<String,URL> capabilityURLs = new HashMap<String,URL>();
 	Map<String,URL> availabilityURLs = new HashMap<String,URL>();
 	Map<String,URL> vamdcTapURLs = new HashMap<String,URL>();
+	Map<String,URL> consumerURLs = new HashMap<String,URL>();
 	
 	Map<String,Set<Restrictable>> vamdcTapRestrictables = new HashMap<String,Set<Restrictable>>();
 	
 	Map<String,Resource> resultResources = new HashMap<String,Resource>();
 
-	public Set<String> getIvoaIDs() {
-		return ivoaIDs;
+	public Set<String> getTapIvoaIDs() {
+		return tapIvoaIDs;
+	}
+
+
+	public Set<String> getConsumerIvoaIDs() {
+		return consumerIvoaIDs;
 	}
 
 
 	RegistrySearch(RegistrySearchPortType searchPort) throws RegistryCommunicationException{
 
-		XQuerySearch xQuerySearch = new XQuerySearch();
-		xQuerySearch.setXquery(searchQuery);
-
-		try {
-			XQuerySearchResponse xqResp = searchPort.xQuerySearch(xQuerySearch);
-			this.searchResult = xqResp.getAny();
-		} catch (ErrorResp e) {
-			throw new RegistryCommunicationException("The registry returned an error",e);
-		} catch (OpUnsupportedResp e) {
-			throw new RegistryCommunicationException("The registry said that the operation is unsupported",e);
-		}
+		XQuerySearch vamdcTapSearch = new XQuerySearch();
+		vamdcTapSearch.setXquery(vamdcTapSearchQuery);
 		
+		List<Object> vamdcTapServices = tryRegistrySearch(searchPort, vamdcTapSearch);
+		treatRegistryResponse(vamdcTapServices);
+		
+		XQuerySearch xsamsConsumerSearch = new XQuerySearch();
+		xsamsConsumerSearch.setXquery(consumerSearchQuery);
+		
+		List<Object> consumers = tryRegistrySearch(searchPort,xsamsConsumerSearch);
+		treatRegistryResponse(consumers);
+		
+	}
+
+
+	private void treatRegistryResponse(List<Object> searchResult) throws RegistryCommunicationException {
 		if (searchResult==null || searchResult.size()==0)
 			throw new RegistryCommunicationException("The registry returned no results");
 		for (Object element:searchResult){
@@ -84,11 +105,25 @@ public class RegistrySearch {
 	}
 
 
+	private List<Object> tryRegistrySearch(RegistrySearchPortType searchPort,
+			XQuerySearch xQuerySearch) throws RegistryCommunicationException {
+		try {
+			XQuerySearchResponse xqResp = searchPort.xQuerySearch(xQuerySearch);
+			return xqResp.getAny();
+		} catch (ErrorResp e) {
+			throw new RegistryCommunicationException("The registry returned an error",e);
+		} catch (OpUnsupportedResp e) {
+			throw new RegistryCommunicationException("The registry said that the operation is unsupported",e);
+		}
+	}
+
+
 	private void extractServiceEndpoints(Service srv) {
 		String ivoaid = srv.getIdentifier();
 		URL capabilitiesURL=null;
 		URL availabilityURL=null;
 		URL vamdcTapURL=null;
+		URL consumerURL=null;
 		Set<Restrictable> keywords = null;
 		try {
 			for (Capability cap:srv.getCapability()){
@@ -101,7 +136,8 @@ public class RegistrySearch {
 					vamdcTapURL=new URL(cap.getInterface().get(0).getAccessURL().get(0).getValue());
 					VamdcTap capability = (VamdcTap)cap;
 					keywords = extractRestrictables( capability);
-					
+				}else if (STD_XSAMS_CONSUMER.equals(cap.getStandardID())){
+					consumerURL = new URL(cap.getInterface().get(1).getAccessURL().get(0).getValue());
 				}
 			}
 		} catch (MalformedURLException e) {
@@ -112,8 +148,10 @@ public class RegistrySearch {
 				availabilityURLs.put(ivoaid, availabilityURL);
 				vamdcTapURLs.put(ivoaid, vamdcTapURL);
 				vamdcTapRestrictables.put(ivoaid, keywords);
-				ivoaIDs.add(ivoaid);
-				
+				tapIvoaIDs.add(ivoaid);
+			}else if (consumerURL!=null){
+				consumerURLs.put(ivoaid, consumerURL);
+				consumerIvoaIDs.add(ivoaid);
 			}
 		}
 	}

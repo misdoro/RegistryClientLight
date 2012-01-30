@@ -32,7 +32,14 @@ public class RegistryCachedImpl implements Registry{
 	
 	@Override
 	public Set<String> getIVOAIDs(Service standard){
-		return Collections.unmodifiableSet(search.getIvoaIDs());
+		switch(standard){
+		case VAMDC_TAP:
+			return Collections.unmodifiableSet(search.getTapIvoaIDs());
+		case CONSUMER:
+			return Collections.unmodifiableSet(search.getConsumerIvoaIDs());
+		default:
+			return Collections.emptySet();
+		}
 	}
 	
 	@Override

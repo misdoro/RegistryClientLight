@@ -26,6 +26,15 @@ public class ClientTest extends TestCase {
 		}	
 	}
 	
+	public void testConsumers() {
+		try {
+			checkConsumerIDs(client);
+		} catch (RegistryCommunicationException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}	
+	}
+	
 	public void testGetCapabilities(){
 		try {
 			checkCapabilityURLs();
@@ -72,7 +81,7 @@ public class ClientTest extends TestCase {
 				System.out.println();
 				System.out.println(service);
 				for (Restrictable keyword:restricts){
-					System.out.println(keyword.name()+"("+keyword.info()+")");
+					System.out.println(keyword.name()+"("+keyword.getInfo()+")");
 				}
 			}
 		}catch (RegistryCommunicationException e) {
@@ -112,6 +121,17 @@ public class ClientTest extends TestCase {
 		}
 	}
 
+	private void checkConsumerIDs(Registry client)
+			throws RegistryCommunicationException {
+		assertNotNull(client.getIVOAIDs(Service.CONSUMER));
+		System.out.println("Retrieving IVOAIDs");
+		for (String service:client.getIVOAIDs(Service.CONSUMER)){
+			assertNotNull(service);
+			assertTrue(service.contains("ivo://vamdc/"));
+			System.out.println(service);
+		}
+	}
+	
 	private Registry getClient() {
 		Registry client = null;
 		try {
