@@ -19,7 +19,7 @@ public interface Registry {
 	
 	public enum Service{
 		VAMDC_TAP("ivo://vamdc/std/VAMDC-TAP"),
-		CONSUMER("ivo://vamdc/std/XSAMS-CONSUMER"),
+		CONSUMER("ivo://vamdc/std/XSAMS-consumer"),
 		;
 		
 		private final String stdID;
@@ -28,7 +28,7 @@ public interface Registry {
 			this.stdID=standardID;
 		}
 		
-		String getStandardID(){
+		public String getStandardID(){
 			return stdID;
 		}
 	}
