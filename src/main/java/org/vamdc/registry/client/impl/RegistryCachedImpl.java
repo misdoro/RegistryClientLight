@@ -54,10 +54,7 @@ public class RegistryCachedImpl implements Registry{
 	
 	@Override
 	public Resource getResourceMetadata(String ivoaid) {
-		Resource result = search.resultResources.get(ivoaid);
-		if (result == null)
-			return null;
-		return (Resource) result.clone();
+		return search.resultResources.get(ivoaid);
 	}
 	
 	@Override
