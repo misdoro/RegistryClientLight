@@ -10,6 +10,12 @@
 	<name>client-light</name>
 	<url>http://maven.apache.org</url>
 
+	<scm>
+		<connection>scm:git:git@github.com:misdoro/RegistryClientLight.git</connection>
+		<url>scm:git:git@github.com:misdoro/RegistryClientLight.git</url>
+		<developerConnection>scm:git:git@github.com:misdoro/RegistryClientLight.git</developerConnection>
+	</scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -39,12 +45,12 @@
 		<dependency>
 			<groupId>org.vamdc</groupId>
 			<artifactId>Dictionaries</artifactId>
-			<version>11.12-SNAPSHOT</version>
+			<version>11.12-r1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ivoa</groupId>
 			<artifactId>mappings</artifactId>
-			<version>11.12-SNAPSHOT</version>
+			<version>11.12</version>
 		</dependency>
 	</dependencies>
 
@@ -58,7 +64,6 @@
 	
 	<build>
 		<plugins>
-			<!-- Don't forget Java 5!! -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
