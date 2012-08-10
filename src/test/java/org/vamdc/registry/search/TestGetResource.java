@@ -15,7 +15,7 @@ public class TestGetResource extends TestCase {
 		Resource result = null;
 		try {
 			//result = search.getResource("ivo://vamdc/basecol/tap-xsams");
-			result = search.getResource("ivo://vamdc/CDMS/Django");
+			result = search.getResource("ivo://vamdc/processors/xsams2svg");
 		} catch (ErrorResp e) {
 			fail (e.getMessage());
 		} catch (NotFoundResp e) {

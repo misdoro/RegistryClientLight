@@ -2,6 +2,7 @@ package org.vamdc.registry.client;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import net.ivoa.xml.voresource.v1.Resource;
@@ -38,18 +39,20 @@ public interface Registry {
 	 * Get all registered IVOA identifiers
 	 * @return a collection of IVOA identifiers from the registry
 	 */
-	public Collection<String> getIVOAIDs(Service standard) throws RegistryCommunicationException;
+	public Collection<String> getIVOAIDs(Service standard);
 	
 
 	
-	public URL getCapabilitiesURL(String ivoaid) throws RegistryCommunicationException;
+	public URL getCapabilitiesURL(String ivoaid);
 	
-	public URL getAvailabilityURL(String ivoaid) throws RegistryCommunicationException;
+	public URL getAvailabilityURL(String ivoaid);
 	
-	public Resource getResourceMetadata(String ivoaid) throws RegistryCommunicationException;;
+	public Resource getResourceMetadata(String ivoaid);
 	
-	public Set<Restrictable> getRestrictables(String ivoaid) throws RegistryCommunicationException;
+	public Set<Restrictable> getRestrictables(String ivoaid);
 	
-	public URL getVamdcTapURL(String ivoaid) throws RegistryCommunicationException;
+	public URL getVamdcTapURL(String ivoaid);
+	
+	public List<VamdcTapService> getMirrors(String ivoaid);
 	
 }

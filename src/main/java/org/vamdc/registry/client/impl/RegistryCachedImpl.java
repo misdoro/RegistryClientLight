@@ -1,7 +1,9 @@
 package org.vamdc.registry.client.impl;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import net.ivoa.wsdl.registrysearch.RegistrySearchPortType;
@@ -10,6 +12,7 @@ import net.ivoa.xml.voresource.v1.Resource;
 import org.vamdc.dictionary.Restrictable;
 import org.vamdc.registry.client.Registry;
 import org.vamdc.registry.client.RegistryCommunicationException;
+import org.vamdc.registry.client.VamdcTapService;
 import org.vamdc.registry.search.RegistryClientFactory;
 
 /**
@@ -65,6 +68,11 @@ public class RegistryCachedImpl implements Registry{
 	@Override
 	public URL getVamdcTapURL(String ivoaid){
 		return search.vamdcTapURLs.get(ivoaid);
+	}
+
+	@Override
+	public List<VamdcTapService> getMirrors(String ivoaid) {
+		return Collections.unmodifiableList(search.mirrors.get(ivoaid));
 	}
 	
 }

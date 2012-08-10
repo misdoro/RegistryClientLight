@@ -3,7 +3,7 @@
 
 	<groupId>org.vamdc</groupId>
 	<artifactId>registry-client-light</artifactId>
-	<version>12.06-SNAPSHOT</version>
+	<version>12.07-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>client-light</name>
@@ -38,13 +38,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.vamdc</groupId>
 			<artifactId>Dictionaries</artifactId>
-			<version>11.12-r1</version>
+			<version>12.07</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ivoa</groupId>
@@ -71,14 +71,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<extensions>
-			<!-- Enabling the use of FTP -->
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-beta-6</version>
-			</extension>
-		</extensions>
 	</build>
 
 </project>
