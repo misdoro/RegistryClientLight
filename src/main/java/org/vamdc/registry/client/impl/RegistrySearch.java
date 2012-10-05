@@ -36,11 +36,12 @@ public class RegistrySearch {
 
 	private static String vamdcTapSearchQuery  = "declare namespace ri='http://www.ivoa.net/xml/RegistryInterface/v1.0'; " +
 			"declare namespace vs='http://www.ivoa.net/xml/VODataService/v1.0'; " +
+			"declare namespace vr='http://www.ivoa.net/xml/VOResource/v1.0'; " +
 			"declare namespace xsi='http://www.w3.org/2001/XMLSchema-instance'; " + 
 			"for $x in //ri:Resource " + 
 			"where $x/capability[@standardID='"+STD_VAMDC_TAP+"'] " +
 			"and $x/@status='active' " +
-			"and $x/@xsi:type='vs:CatalogService'" +
+			"and ($x/@xsi:type='vs:CatalogService' or $x/@xsi:type='vr:Service')" +
 			"return $x";
 	
 	private static String consumerSearchQuery  = "declare namespace ri='http://www.ivoa.net/xml/RegistryInterface/v1.0'; " +
