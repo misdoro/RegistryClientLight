@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
 
+@SuppressWarnings("restriction")
 public class TestRegistryXQuerySearch extends TestCase {
 
 
@@ -86,7 +87,7 @@ public class TestRegistryXQuerySearch extends TestCase {
 			assertTrue(searchResult.size()>0);
 			for (Object element:searchResult){
 				System.out.println();
-				com.sun.org.apache.xerces.internal.dom.ElementNSImpl el = (ElementNSImpl) element;
+				ElementNSImpl el = (ElementNSImpl) element;
 				
 				//System.out.println(el.getElementsByTagName(""));
 				System.out.println(el.getChildNodes().getLength());
