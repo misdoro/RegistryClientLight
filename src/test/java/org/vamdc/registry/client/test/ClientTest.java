@@ -108,7 +108,15 @@ public class ClientTest{
 				}
 			}
 		}
-		assertTrue(mirrorsCount>1);
+		assertTrue(mirrorsCount>=1);
+	}
+	
+	@Test
+	public void findWrongMirrors(){
+		System.out.println("Looking for mirrors of a wrong ivoaid");
+		for (VamdcTapService none:client.getMirrors("wrong")){
+			fail("We should have an empty list here");
+		}
 	}
 
 	private void checkAvailabiltyURLs() throws RegistryCommunicationException {
@@ -156,7 +164,7 @@ public class ClientTest{
 	private Registry getClient() {
 		Registry client = null;
 		try {
-			client = RegistryFactory.getClient(RegistryFactory.DEVEL_REGISTRY_ENDPOINT);
+			client = RegistryFactory.getClient(RegistryFactory.REGISTRY_12_07);
 		} catch (RegistryCommunicationException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
