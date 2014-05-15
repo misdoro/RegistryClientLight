@@ -1,7 +1,6 @@
 package org.vamdc.registry.client.impl;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +61,10 @@ public class RegistryCachedImpl implements Registry{
 	
 	@Override
 	public Set<Restrictable> getRestrictables(String ivoaid){
-		return Collections.unmodifiableSet(search.vamdcTapRestrictables.get(ivoaid));
+		Set<Restrictable> ret=search.vamdcTapRestrictables.get(ivoaid);
+		if (ret!=null)
+			return Collections.unmodifiableSet(ret);
+		return Collections.emptySet();
 	}
 	
 	@Override
@@ -72,7 +74,10 @@ public class RegistryCachedImpl implements Registry{
 
 	@Override
 	public List<VamdcTapService> getMirrors(String ivoaid) {
-		return Collections.unmodifiableList(search.mirrors.get(ivoaid));
+		List<VamdcTapService> ret=search.mirrors.get(ivoaid);
+		if (ret!=null)
+			return Collections.unmodifiableList(ret);
+		return Collections.emptyList();
 	}
 	
 }
