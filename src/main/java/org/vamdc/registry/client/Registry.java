@@ -51,6 +51,8 @@ public interface Registry {
 	
 	public Set<Restrictable> getRestrictables(String ivoaid);
 	
+	public List<String> getProcessors(String ivoaid);
+	
 	public URL getVamdcTapURL(String ivoaid);
 	
 	public List<VamdcTapService> getMirrors(String ivoaid);

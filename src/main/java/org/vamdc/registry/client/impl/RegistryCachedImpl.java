@@ -79,5 +79,10 @@ public class RegistryCachedImpl implements Registry{
 			return Collections.unmodifiableList(ret);
 		return Collections.emptyList();
 	}
+
+	@Override
+	public List<String> getProcessors(String ivoaid) {
+		return search.vamdcTapProcessors.get(ivoaid);
+	}
 	
 }

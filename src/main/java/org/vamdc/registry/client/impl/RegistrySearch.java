@@ -3,6 +3,7 @@ package org.vamdc.registry.client.impl;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,6 +65,8 @@ public class RegistrySearch {
 	Map<String,List<VamdcTapService>> mirrors = new HashMap<String,List<VamdcTapService>>();
 	
 	Map<String,Set<Restrictable>> vamdcTapRestrictables = new HashMap<String,Set<Restrictable>>();
+	
+	Map<String,List<String>> vamdcTapProcessors = new HashMap<String,List<String>>();
 	
 	Map<String,Resource> resultResources = new HashMap<String,Resource>();
 
@@ -129,6 +132,7 @@ public class RegistrySearch {
 		String ivoaid = srv.getIdentifier();
 		URL consumerURL=null;
 		Set<Restrictable> keywords = null;
+		List<String> processors=null;
 		
 		List<AccessURL> caps = null;
 		List<AccessURL> avail = null;
@@ -151,6 +155,7 @@ public class RegistrySearch {
 					taps = cap.getInterface().get(0).getAccessURL();
 					VamdcTap capability = (VamdcTap)cap;
 					keywords = extractRestrictables(ivoaid, capability);
+					processors = extractProcessors(ivoaid,capability);
 				}else if (STD_XSAMS_CONSUMER.equals(cap.getStandardID())){
 					consumerURL = new URL(cap.getInterface().get(1).getAccessURL().get(0).getValue());
 				}
@@ -177,6 +182,7 @@ public class RegistrySearch {
 				availabilityURLs.put(ivoaid, mirrorList.get(0).AvailabilityEndpoint);
 				vamdcTapURLs.put(ivoaid, mirrorList.get(0).TAPEndpoint);
 				vamdcTapRestrictables.put(ivoaid, keywords);
+				vamdcTapProcessors.put(ivoaid, processors);
 				tapIvoaIDs.add(ivoaid);
 			}else if (consumerURL!=null){
 				consumerURLs.put(ivoaid, consumerURL);
@@ -190,6 +196,13 @@ public class RegistrySearch {
 		return caps!=null && caps.size()==mirrorCount;
 	}
 
+	private List<String> extractProcessors(String ivoaid,VamdcTap capability){
+		List<String> apps = capability.getApplication();
+		if (apps!=null && apps.size()>0){
+			return Collections.unmodifiableList(apps);
+		}
+		return Collections.emptyList();
+	}
 
 	private Set<Restrictable> extractRestrictables(String ivoaid,VamdcTap capability) {
 		Set<Restrictable> result = new HashSet<Restrictable>();
