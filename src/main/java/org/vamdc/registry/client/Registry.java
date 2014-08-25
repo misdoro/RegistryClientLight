@@ -57,4 +57,6 @@ public interface Registry {
 	
 	public List<VamdcTapService> getMirrors(String ivoaid);
 	
+	public String getNumberOfInputs(String consumerId);
+	
 }

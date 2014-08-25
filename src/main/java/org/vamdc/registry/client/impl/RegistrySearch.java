@@ -17,6 +17,7 @@ import org.vamdc.dictionary.Restrictable;
 import org.vamdc.registry.client.RegistryCommunicationException;
 import org.vamdc.registry.client.VamdcTapService;
 import org.vamdc.xml.vamdc_tap.v1.VamdcTap;
+import org.w3c.dom.Node;
 
 import net.ivoa.wsdl.registrysearch.ErrorResp;
 import net.ivoa.wsdl.registrysearch.OpUnsupportedResp;
@@ -53,15 +54,18 @@ public class RegistrySearch {
 			"and $x/@status='active' " +
 			"and $x/@xsi:type='vr:Service'" +
 			"return $x";
-
-
+	
+	
 	private Set<String> tapIvoaIDs = new HashSet<String>();
 	private Set<String> consumerIvoaIDs = new HashSet<String>();
+	
+	private RegistrySearchPortType searchPort;
 	
 	Map<String,URL> capabilityURLs = new HashMap<String,URL>();
 	Map<String,URL> availabilityURLs = new HashMap<String,URL>();
 	Map<String,URL> vamdcTapURLs = new HashMap<String,URL>();
 	Map<String,URL> consumerURLs = new HashMap<String,URL>();
+	Map<String,String> consumerNumberOfInputs = new HashMap<String,String>();
 	Map<String,List<VamdcTapService>> mirrors = new HashMap<String,List<VamdcTapService>>();
 	
 	Map<String,Set<Restrictable>> vamdcTapRestrictables = new HashMap<String,Set<Restrictable>>();
@@ -81,7 +85,7 @@ public class RegistrySearch {
 
 
 	RegistrySearch(RegistrySearchPortType searchPort) throws RegistryCommunicationException{
-
+		this.searchPort = searchPort;
 		XQuerySearch vamdcTapSearch = new XQuerySearch();
 		vamdcTapSearch.setXquery(vamdcTapSearchQuery);
 		
@@ -95,7 +99,18 @@ public class RegistrySearch {
 		try{
 			treatRegistryResponse(consumers);
 		}catch (RegistryCommunicationException e){
-		}
+		}	
+		
+		
+		for (String consumerId : consumerIvoaIDs){
+			try {
+				consumerNumberOfInputs.put(consumerId, getProcessorNumberOfInputs(consumerId));
+			} catch (RegistryCommunicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+
 	}
 
 
@@ -108,9 +123,7 @@ public class RegistrySearch {
 			
 			extractServiceEndpoints(srv);
 			
-			resultResources.put(srv.getIdentifier(), srv);
-			
-			
+			resultResources.put(srv.getIdentifier(), srv);				
 		}
 	}
 
@@ -125,6 +138,21 @@ public class RegistrySearch {
 		} catch (OpUnsupportedResp e) {
 			throw new RegistryCommunicationException("The registry said that the operation is unsupported",e);
 		}
+	}
+	
+	private String getProcessorNumberOfInputs(String processorId) throws RegistryCommunicationException{
+
+		String numberOfInputsQuery = "declare namespace ri='http://www.ivoa.net/xml/RegistryInterface/v1.0'; " +
+				" declare namespace vr='http://www.ivoa.net/xml/VOResource/v1.0'; " +
+				" declare namespace xsi='http://www.w3.org/2001/XMLSchema-instance'; " + 
+				" for $x in //ri:Resource " + 
+				" where $x/identifier='"+processorId+"' " +
+				" return $x/capability[@standardID='ivo://vamdc/std/XSAMS-consumer']/numberOfInputs"; 
+		
+		XQuerySearch testSearch = new XQuerySearch();
+		testSearch.setXquery(numberOfInputsQuery);
+		List<Object> results = tryRegistrySearch(searchPort, testSearch);
+		return ((Node)results.get(0)).getTextContent();
 	}
 
 
@@ -188,6 +216,8 @@ public class RegistrySearch {
 				consumerURLs.put(ivoaid, consumerURL);
 				consumerIvoaIDs.add(ivoaid);
 			}
+			
+
 		}
 	}
 
