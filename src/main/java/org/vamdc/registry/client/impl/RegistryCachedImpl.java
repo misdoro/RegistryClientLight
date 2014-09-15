@@ -85,4 +85,9 @@ public class RegistryCachedImpl implements Registry{
 		return search.vamdcTapProcessors.get(ivoaid);
 	}
 	
+	@Override
+	public String getNumberOfInputs(String consumerId){
+		return search.consumerNumberOfInputs.get(consumerId);
+	}
+	
 }
