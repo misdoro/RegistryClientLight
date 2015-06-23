@@ -52,7 +52,7 @@ public class TestRegistryXQuerySearch extends TestCase {
 			assertTrue(searchResult.size()>0);
 			for (Object element:searchResult){
 				System.out.println();
-				JAXBElement obj = (JAXBElement)element;
+				JAXBElement<?> obj = (JAXBElement<?>)element;
 				System.out.println(obj.getName());
 				Service srv = (Service) obj.getValue();
 				System.out.println(srv.getIdentifier());

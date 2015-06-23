@@ -17,9 +17,45 @@ import org.vamdc.registry.client.RegistryFactory;
 import org.vamdc.registry.client.VamdcTapService;
 
 public class ClientTest{
+	public final static String UnknownHostURL="http://randomgarbageasdfkasdkjhfqwerjgflkesjtghvszdckxlaelfjhs.com/registry/services/RegistryQueryv1_0";
+	public final static String UnreachURL="http://255.255.255.255/registry/services/RegistryQueryv1_0";
 
 	private Registry client = getClient();
 
+	@Test
+	public void testUnknownHost(){
+		Registry client = null;
+		try {
+			client = RegistryFactory.getClient(UnknownHostURL);
+		} catch (RegistryCommunicationException e) {
+			e.printStackTrace();
+			assertNotNull(e.getMessage());
+			assertNotNull(e.getCause());
+			assertTrue(e.getCause() instanceof java.net.UnknownHostException);
+		} catch (Exception e){
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		assertNull(client);
+	}
+	
+	@Test
+	public void testUnreachHost(){
+		Registry client = null;
+		try {
+			client = RegistryFactory.getClient(UnreachURL);
+		} catch (RegistryCommunicationException e) {
+			e.printStackTrace();
+			assertNotNull(e.getMessage());
+			assertNotNull(e.getCause());
+			assertTrue(e.getCause() instanceof java.net.SocketException);
+		} catch (Exception e){
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		assertNull(client);
+	}
+	
 	@Test
 	public void testGetClient() {
 		try {

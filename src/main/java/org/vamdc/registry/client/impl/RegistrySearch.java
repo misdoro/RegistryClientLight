@@ -92,10 +92,8 @@ public class RegistrySearch {
 		xsamsConsumerSearch.setXquery(consumerSearchQuery);
 		
 		List<Object> consumers = tryRegistrySearch(searchPort,xsamsConsumerSearch);
-		try{
-			treatRegistryResponse(consumers);
-		}catch (RegistryCommunicationException e){
-		}
+		treatRegistryResponse(consumers);
+		
 	}
 
 

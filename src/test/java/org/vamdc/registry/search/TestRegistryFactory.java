@@ -11,7 +11,6 @@ import junit.framework.TestCase;
 public class TestRegistryFactory extends TestCase {
 
 	public final static String REGISTRY_URL="http://registry.vamdc.eu/registry-12.07/services/RegistryQueryv1_0";
-	public final static String UnknownHost_URL="http://randomgarbageasdfkasdkjhfqwerjgflkesjtghvszdckxlaelfjhs.com/registry/services/RegistryQueryv1_0";
 	
 	public void testGetService() {
 		RegistrySearchPortType port = RegistryClientFactory.getSearchPort();
