@@ -16,7 +16,7 @@ public class TestGetResource extends TestCase {
 		Resource result = null;
 		try {
 			//result = search.getResource("ivo://vamdc/basecol/tap-xsams");
-			result = search.getResource("ivo://vamdc/processors/xsams2svg");
+			result = search.getResource("ivo://vamdc/xsams2sme");
 		} catch (ErrorResp e) {
 			fail (e.getMessage());
 		} catch (NotFoundResp e) {
