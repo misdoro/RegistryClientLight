@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.vamdc</groupId>
 			<artifactId>Dictionaries</artifactId>
-			<version>12.07</version>
+			<version>12.07r2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ivoa</groupId>
