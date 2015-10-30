@@ -96,20 +96,8 @@ public class RegistrySearch {
 		xsamsConsumerSearch.setXquery(consumerSearchQuery);
 		
 		List<Object> consumers = tryRegistrySearch(searchPort,xsamsConsumerSearch);
-		try{
-			treatRegistryResponse(consumers);
-		}catch (RegistryCommunicationException e){
-		}	
+		treatRegistryResponse(consumers);
 		
-		
-		for (String consumerId : consumerIvoaIDs){
-			try {
-				consumerNumberOfInputs.put(consumerId, getProcessorNumberOfInputs(consumerId));
-			} catch (RegistryCommunicationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
 
 	}
 

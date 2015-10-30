@@ -26,9 +26,19 @@ public class RegistryCachedImpl implements Registry{
 	private RegistrySearch search;
 	
 	public RegistryCachedImpl(String registryEndpoint) throws RegistryCommunicationException{
-		RegistrySearchPortType searchPort = RegistryClientFactory.getSearchPort(registryEndpoint);
+		try{
+			RegistrySearchPortType searchPort = RegistryClientFactory.getSearchPort(registryEndpoint);
 		
-		this.search = new RegistrySearch(searchPort);
+			this.search = new RegistrySearch(searchPort);
+		}catch(RegistryCommunicationException e){
+			throw e;
+		}catch(Exception e){
+			Throwable ecause=null;
+			if ((ecause=e.getCause())!=null)
+				throw new RegistryCommunicationException("Communication error: "+ecause.getMessage(),ecause);
+			else
+				throw new RegistryCommunicationException("Communication error: "+e.getMessage(),e);
+		}
 		
 	}
 	

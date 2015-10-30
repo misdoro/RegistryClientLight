@@ -10,12 +10,13 @@ import junit.framework.TestCase;
 
 public class TestGetResource extends TestCase {
 
+	public final static String REGISTRY_URL="http://registry.vamdc.eu/registry-12.07/services/RegistryQueryv1_0";
 	public void testGetResource() {
-		RegistrySearchPortType search = RegistryClientFactory.getSearchPort();
+		RegistrySearchPortType search = RegistryClientFactory.getSearchPort(REGISTRY_URL);
 		Resource result = null;
 		try {
 			//result = search.getResource("ivo://vamdc/basecol/tap-xsams");
-			result = search.getResource("ivo://vamdc/processors/xsams2svg");
+			result = search.getResource("ivo://vamdc/xsams2sme");
 		} catch (ErrorResp e) {
 			fail (e.getMessage());
 		} catch (NotFoundResp e) {

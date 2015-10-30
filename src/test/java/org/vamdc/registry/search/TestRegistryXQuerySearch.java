@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import org.vamdc.registry.client.RegistryFactory;
 import org.vamdc.registry.search.RegistryClientFactory;
 
 import net.ivoa.wsdl.registrysearch.ErrorResp;
@@ -42,7 +43,7 @@ public class TestRegistryXQuerySearch extends TestCase {
 		XQuerySearch xQuerySearch = new XQuerySearch();
 		xQuerySearch.setXquery(xquery);
 
-		RegistrySearchPortType search = RegistryClientFactory.getSearchPort();
+		RegistrySearchPortType search = RegistryClientFactory.getSearchPort(RegistryFactory.REGISTRY_12_07);
 
 		try {
 			XQuerySearchResponse xqResp = search.xQuerySearch(xQuerySearch);
@@ -51,7 +52,7 @@ public class TestRegistryXQuerySearch extends TestCase {
 			assertTrue(searchResult.size()>0);
 			for (Object element:searchResult){
 				System.out.println();
-				JAXBElement obj = (JAXBElement)element;
+				JAXBElement<?> obj = (JAXBElement<?>)element;
 				System.out.println(obj.getName());
 				Service srv = (Service) obj.getValue();
 				System.out.println(srv.getIdentifier());
@@ -78,7 +79,7 @@ public class TestRegistryXQuerySearch extends TestCase {
 		XQuerySearch xQuerySearch = new XQuerySearch();
 		xQuerySearch.setXquery(xquery2);
 
-		RegistrySearchPortType search = RegistryClientFactory.getSearchPort();
+		RegistrySearchPortType search = RegistryClientFactory.getSearchPort(RegistryFactory.REGISTRY_12_07);
 
 		try {
 			XQuerySearchResponse xqResp = search.xQuerySearch(xQuerySearch);

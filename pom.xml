@@ -3,7 +3,7 @@
 
 	<groupId>org.vamdc</groupId>
 	<artifactId>registry-client-light</artifactId>
-	<version>12.07r1-SNAPSHOT</version>
+	<version>12.07r3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>registry-client-light</name>
@@ -24,7 +24,7 @@
 		<repository>
 			<id>vamdc repository</id>
 			<name>VAMDC Maven repository</name>
-			<url>http://dev.vamdc.org/nexus/content/repositories/releases</url>
+			<url>http://nexus.vamdc.org/nexus/content/repositories/releases</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
@@ -33,18 +33,18 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.vamdc</groupId>
 			<artifactId>Dictionaries</artifactId>
-			<version>12.07</version>
+			<version>12.07r2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ivoa</groupId>
 			<artifactId>mappings</artifactId>
-			<version>12.07r2-SNAPSHOT</version>
+			<version>12.07r2</version>
 		</dependency>
 	</dependencies>
 
@@ -53,14 +53,14 @@
 		<repository>
 			<id>nexus</id>
 			<name>VAMDC Releases</name>
-			<url>http://dev.vamdc.org/nexus/content/repositories/releases</url>
+			<url>http://nexus.vamdc.org/nexus/content/repositories/releases</url>
 		</repository>
 		
 		<!-- Publish snapshots here -->
 		<snapshotRepository>
 			<id>nexus</id>
 			<name>VAMDC Snapshot releases</name>
-			<url>http://dev.vamdc.org/nexus/content/repositories/snapshots</url>
+			<url>http://nexus.vamdc.org/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	
