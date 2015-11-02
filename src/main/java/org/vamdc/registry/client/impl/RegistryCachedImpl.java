@@ -26,6 +26,7 @@ public class RegistryCachedImpl implements Registry{
 	private RegistrySearch search;
 	
 	public RegistryCachedImpl(String registryEndpoint) throws RegistryCommunicationException{
+		
 		try{
 			RegistrySearchPortType searchPort = RegistryClientFactory.getSearchPort(registryEndpoint);
 		
@@ -49,6 +50,18 @@ public class RegistryCachedImpl implements Registry{
 			return Collections.unmodifiableSet(search.getTapIvoaIDs());
 		case CONSUMER:
 			return Collections.unmodifiableSet(search.getConsumerIvoaIDs());
+		default:
+			return Collections.emptySet();
+		}
+	}
+	
+	@Override
+	public Set<String> getInactiveIVOAIDs(Service standard){
+		switch(standard){
+		case VAMDC_TAP:
+			return Collections.unmodifiableSet(search.getTapInactiveIvoaIDs());
+		case CONSUMER:
+			return Collections.unmodifiableSet(search.getConsumerInactiveIvoaIDs());
 		default:
 			return Collections.emptySet();
 		}
@@ -94,5 +107,6 @@ public class RegistryCachedImpl implements Registry{
 	public List<String> getProcessors(String ivoaid) {
 		return search.vamdcTapProcessors.get(ivoaid);
 	}
+	
 	
 }

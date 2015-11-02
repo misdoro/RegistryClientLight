@@ -42,6 +42,12 @@ public interface Registry {
 	public Collection<String> getIVOAIDs(Service standard);
 	
 	/**
+	 * Get all registered IVOA identifiers of the service type Service (VAMDC-TAP or XSAMS-consumer)
+	 * @return a collection of IVOA identifiers from the registry
+	 */
+	public Collection<String> getInactiveIVOAIDs(Service standard);
+	
+	/**
 	 * Get the capabilities URL of the VAMDC-TAP service ivoaid
 	 * Deprecated - use GetMirrors.
 	 * @param ivoaid
@@ -80,6 +86,7 @@ public interface Registry {
 	 */
 	public List<String> getProcessors(String ivoaid);
 	
+	
 	/**
 	 * Get the VAMDC-TAP URL of the VAMDC-TAP service ivoaid
 	 * @param ivoaid
@@ -93,6 +100,7 @@ public interface Registry {
 	 * @param ivoaid
 	 * @return
 	 */
-	public List<VamdcTapService> getMirrors(String ivoaid);
+	public List<VamdcTapService> getMirrors(String ivoaid);	
+
 	
 }
