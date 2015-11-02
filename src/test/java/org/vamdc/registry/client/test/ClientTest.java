@@ -20,7 +20,7 @@ public class ClientTest{
 	public final static String UnknownHostURL="http://randomgarbageasdfkasdkjhfqwerjgflkesjtghvszdckxlaelfjhs.com/registry/services/RegistryQueryv1_0";
 	public final static String UnreachURL="http://255.255.255.255/registry/services/RegistryQueryv1_0";
 
-	private Registry client = getClient();
+	private final Registry client = getClient();
 
 	@Test
 	public void testUnknownHost(){
@@ -190,10 +190,14 @@ public class ClientTest{
 			throws RegistryCommunicationException {
 		assertNotNull(client.getIVOAIDs(Service.CONSUMER));
 		System.out.println("Retrieving IVOAIDs");
+		assertTrue(client.getIVOAIDs(Service.CONSUMER).size()>0);
 		for (String service:client.getIVOAIDs(Service.CONSUMER)){
 			assertNotNull(service);
 			assertTrue(service.contains("ivo://vamdc/"));
-			System.out.println(service);
+			String title = client.getResourceMetadata(service).getTitle();
+			assertTrue(title!=null && title.length()>0);
+			System.out.println(title+" "+service);
+			
 		}
 	}
 

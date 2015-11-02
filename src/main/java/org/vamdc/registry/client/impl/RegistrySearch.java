@@ -13,13 +13,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
-import org.vamdc.dictionary.Restrictable;
-import org.vamdc.registry.client.Registry;
-import org.vamdc.registry.client.RegistryCommunicationException;
-import org.vamdc.registry.client.VamdcTapService;
-import org.vamdc.xml.vamdc_tap.v1.VamdcTap;
-import org.w3c.dom.Node;
-
 import net.ivoa.wsdl.registrysearch.ErrorResp;
 import net.ivoa.wsdl.registrysearch.OpUnsupportedResp;
 import net.ivoa.wsdl.registrysearch.RegistrySearchPortType;
@@ -27,11 +20,21 @@ import net.ivoa.wsdl.registrysearch.v1.XQuerySearch;
 import net.ivoa.wsdl.registrysearch.v1.XQuerySearchResponse;
 import net.ivoa.xml.voresource.v1.AccessURL;
 import net.ivoa.xml.voresource.v1.Capability;
+import net.ivoa.xml.voresource.v1.Interface;
 import net.ivoa.xml.voresource.v1.Resource;
 import net.ivoa.xml.voresource.v1.Service;
 
-public class RegistrySearch {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vamdc.dictionary.Restrictable;
+import org.vamdc.registry.client.RegistryCommunicationException;
+import org.vamdc.registry.client.VamdcTapService;
+import org.vamdc.xml.vamdc_tap.v1.VamdcTap;
 
+class RegistrySearch {
+
+	private Logger logger = LoggerFactory.getLogger(RegistrySearch.class);
+	
 	private final static String STD_VOSI_CAPABILITIES = "ivo://ivoa.net/std/VOSI#capabilities";
 	private final static String STD_VOSI_AVAILABILITY = "ivo://ivoa.net/std/VOSI#availability";
 	private final static String STD_VAMDC_TAP = "ivo://vamdc/std/VAMDC-TAP";
@@ -66,8 +69,6 @@ public class RegistrySearch {
 	private Set<String> consumerIvoaIDs = new HashSet<String>();
 	private Set<String> consumerInactiveIvoaIDs = new HashSet<String>();
 
-	private RegistrySearchPortType searchPort;
-
 	Map<String, URL> capabilityURLs = new HashMap<String, URL>();
 	Map<String, URL> availabilityURLs = new HashMap<String, URL>();
 	Map<String, URL> vamdcTapURLs = new HashMap<String, URL>();
@@ -100,7 +101,6 @@ public class RegistrySearch {
 
 	RegistrySearch(RegistrySearchPortType searchPort)
 			throws RegistryCommunicationException {
-		this.searchPort = searchPort;
 		XQuerySearch vamdcTapSearch = new XQuerySearch();
 		vamdcTapSearch.setXquery(vamdcTapSearchQuery);
 
@@ -157,41 +157,41 @@ public class RegistrySearch {
 		List<AccessURL> taps = null;
 
 		int mirrorCount = 0;
-		for (Capability cap : srv.getCapability()) {
-			if (STD_VOSI_CAPABILITIES.equals(cap.getStandardID())) {
-				mirrorCount = cap.getInterface().get(0).getAccessURL().size();
-			}
-		}
-
 		try {
 			for (Capability cap : srv.getCapability()) {
-				if (STD_VOSI_CAPABILITIES.equals(cap.getStandardID()))
+				String standard=cap.getStandardID();
+				if (STD_VOSI_CAPABILITIES.equals(standard)){
+					mirrorCount = cap.getInterface().get(0).getAccessURL().size();
 					caps = cap.getInterface().get(0).getAccessURL();
-				else if (STD_VOSI_AVAILABILITY.equals(cap.getStandardID()))
+					
+				} else if (STD_VOSI_AVAILABILITY.equals(standard)){
 					avail = cap.getInterface().get(0).getAccessURL();
-				else if (STD_VAMDC_TAP.equals(cap.getStandardID())) {
+					
+				} else if (STD_VAMDC_TAP.equals(standard)) {
 					taps = cap.getInterface().get(0).getAccessURL();
 					VamdcTap capability = (VamdcTap) cap;
 					keywords = extractRestrictables(ivoaid, capability);
-					processors = extractProcessors(ivoaid, capability);
-				} else if (STD_XSAMS_CONSUMER.equals(cap.getStandardID())) {
-					consumerURL = new URL(cap.getInterface().get(1)
-							.getAccessURL().get(0).getValue());
+					processors = extractProcessors(capability);
+					
+				} else if (STD_XSAMS_CONSUMER.equals(standard)) {
+					consumerURL = extractConsumerURL(cap.getInterface());
 				}
 			}
 		} catch (MalformedURLException e) {
 		} finally {
-			if (checkList(caps, mirrorCount) && checkList(avail, mirrorCount)
-					&& checkList(taps, mirrorCount) && keywords != null) {
-				List<VamdcTapService> mirrorList = new ArrayList<VamdcTapService>(
-						mirrorCount);
+			if (mirrorCount>0 
+					&& checkList(caps, mirrorCount) 
+					&& checkList(avail, mirrorCount)
+					&& checkList(taps, mirrorCount) 
+					&& keywords != null) {
+				List<VamdcTapService> mirrorList = new ArrayList<VamdcTapService>(mirrorCount);
 				for (int i = 0; i < mirrorCount; i++) {
 					try {
-						mirrorList
-								.add(new VamdcTapService(ivoaid, new URL(taps
-										.get(i).getValue()), new URL(caps
-										.get(i).getValue()), new URL(avail.get(
-										i).getValue())));
+						mirrorList.add(
+								new VamdcTapService(ivoaid, 
+										new URL(taps.get(i).getValue()), 
+										new URL(caps.get(i).getValue()), 
+										new URL(avail.get(i).getValue())));
 					} catch (MalformedURLException e) {
 					}
 				}
@@ -204,17 +204,19 @@ public class RegistrySearch {
 				vamdcTapRestrictables.put(ivoaid, keywords);
 				vamdcTapProcessors.put(ivoaid, processors);
 
-				if (srv.getStatus().equals(this.ACTIVE_RESOURCE)) {
+				String status = srv.getStatus();
+				if (this.ACTIVE_RESOURCE.equals(status)) {
 					tapIvoaIDs.add(ivoaid);
-				} else if (srv.getStatus().equals(this.INACTIVE_RESOURCE)) {
+				} else if (this.INACTIVE_RESOURCE.equals(status)) {
 					this.tapInactiveIvoaIDs.add(ivoaid);
 				}
 
 			} else if (consumerURL != null) {
-				if (srv.getStatus().equals(this.ACTIVE_RESOURCE)) {
+				String status = srv.getStatus();
+				if (this.ACTIVE_RESOURCE.equals(status)) {
 					consumerURLs.put(ivoaid, consumerURL);
 					consumerIvoaIDs.add(ivoaid);
-				} else if (srv.getStatus().equals(this.INACTIVE_RESOURCE)) {
+				} else if (this.INACTIVE_RESOURCE.equals(status)) {
 					consumerInactiveIvoaIDs.add(ivoaid);
 				}
 			}
@@ -222,11 +224,22 @@ public class RegistrySearch {
 		}
 	}
 
+	private static URL extractConsumerURL(List<Interface> interfaces) throws MalformedURLException {
+		for (Interface interf: interfaces){
+			if (interf instanceof net.ivoa.xml.vodataservice.v1.ParamHTTP
+					|| interf instanceof net.ivoa.xml.vodataservice.v1_1.ParamHTTP){
+				return new URL(interf.getAccessURL().get(0).getValue());
+			}
+		}
+
+		return null;
+	}
+
 	private static boolean checkList(List<AccessURL> caps, int mirrorCount) {
 		return caps != null && caps.size() == mirrorCount;
 	}
 
-	private List<String> extractProcessors(String ivoaid, VamdcTap capability) {
+	private List<String> extractProcessors(VamdcTap capability) {
 		List<String> apps = capability.getApplication();
 		if (apps != null && apps.size() > 0) {
 			return Collections.unmodifiableList(apps);
@@ -249,9 +262,9 @@ public class RegistrySearch {
 		}
 
 		if (unknownKeywords.size() > 0) {
-			System.err.println("Unknown keywords for ivoaid " + ivoaid);
+			logger.warn("Unknown keywords for node {}",ivoaid);
 			for (String keyword : unknownKeywords) {
-				System.err.println(keyword);
+				logger.warn(keyword);
 			}
 		}
 
